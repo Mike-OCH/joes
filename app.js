@@ -4,9 +4,14 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+// New Code
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('192.168.56.101:27017/nodetest1');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+
 
 var app = express();
 
@@ -21,7 +26,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+//Make our DB accessible to our router
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
 app.use('/', routes);
 app.use('/users', users);
 
